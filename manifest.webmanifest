@@ -1,0 +1,19 @@
+{
+  "name": "Thư viện Hỏi đáp",
+  "short_name": "Hỏi đáp",
+  "description": "Tra cứu và quản lý thư viện câu hỏi, đáp án.",
+  "lang": "vi",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f7fa",
+  "theme_color": "#1769aa",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

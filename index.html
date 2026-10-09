@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1769aa">
+  <meta name="description" content="Tra cứu và quản lý thư viện câu hỏi, đáp án trên điện thoại và máy tính.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Thư viện Hỏi đáp">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Thư viện Hỏi đáp</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="app-header">
+      <div class="brand">
+        <img src="./icon.svg" alt="" width="44" height="44">
+        <div>
+          <h1>Thư viện Hỏi đáp</h1>
+          <p id="count-label">Đang tải dữ liệu…</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <span id="sync-status" class="sync-status" role="status">Chưa kết nối Google Sheets</span>
+        <button id="connect-button" class="button button-secondary" type="button">Kết nối Google</button>
+        <button id="sync-button" class="button button-primary" type="button" disabled>Đồng bộ</button>
+      </div>
+    </header>
+
+    <section class="search-panel" aria-label="Tra cứu câu hỏi">
+      <label class="search-box">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input id="search-input" type="search" autocomplete="off" enterkeyhint="search"
+               placeholder="Nhập từ khóa câu hỏi… (có thể gõ không dấu)">
+        <button id="clear-search" class="clear-search" type="button" aria-label="Xóa từ khóa" hidden>×</button>
+      </label>
+      <div class="search-meta">
+        <span id="result-count">Chọn một câu hỏi để xem đáp án</span>
+        <button id="add-button" class="button button-primary" type="button">＋ Thêm câu hỏi</button>
+      </div>
+    </section>
+
+    <section class="content-grid">
+      <section class="results-panel" aria-label="Kết quả tìm kiếm">
+        <div id="question-list" class="question-list" role="list"></div>
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon" aria-hidden="true">⌕</div>
+          <strong id="empty-title">Chưa có câu hỏi nào</strong>
+          <p id="empty-message">Kết nối Google Sheets để tải kho dữ liệu dùng chung.</p>
+        </div>
+      </section>
+
+      <section class="answer-panel" aria-label="Chi tiết câu hỏi">
+        <div id="answer-empty" class="answer-empty">
+          <div class="answer-mark" aria-hidden="true">?</div>
+          <strong>Chọn câu hỏi để xem đáp án</strong>
+          <p>Gõ từ khóa hoặc chọn một câu trong danh sách.</p>
+        </div>
+        <article id="answer-card" class="answer-card" hidden>
+          <div class="answer-heading">
+            <div>
+              <span class="eyebrow">CÂU HỎI</span>
+              <h2 id="selected-question"></h2>
+            </div>
+            <div class="record-actions">
+              <button id="edit-button" class="icon-button" type="button" aria-label="Sửa câu hỏi" title="Sửa">Sửa</button>
+              <button id="delete-button" class="icon-button danger" type="button" aria-label="Xóa câu hỏi" title="Xóa">Xóa</button>
+            </div>
+          </div>
+          <div class="answer-body">
+            <span class="eyebrow">ĐÁP ÁN</span>
+            <p id="selected-answer"></p>
+          </div>
+          <div id="keywords-row" class="keywords-row" hidden>
+            <span class="eyebrow">TỪ KHÓA</span>
+            <p id="selected-keywords"></p>
+          </div>
+          <div class="answer-footer">
+            <span id="record-meta"></span>
+            <button id="copy-button" class="button button-primary" type="button">Sao chép đáp án</button>
+          </div>
+        </article>
+      </section>
+    </section>
+
+    <footer class="app-footer">
+      <div class="footer-actions">
+        <button id="export-button" class="text-button" type="button">Tải bản sao lưu</button>
+        <label class="text-button file-button" for="import-file">Khôi phục bản sao lưu</label>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+      </div>
+      <span>© P. Công tác xã hội - Bệnh viện Nhân dân Gia Định (LPT)</span>
+      <span id="user-label"></span>
+    </footer>
+  </main>
+
+  <div id="editor" class="modal-backdrop" hidden>
+    <form id="editor-form" class="editor-dialog">
+      <div class="dialog-heading">
+        <div>
+          <span class="eyebrow">THƯ VIỆN HỎI ĐÁP</span>
+          <h2 id="editor-title">Thêm câu hỏi</h2>
+        </div>
+        <button id="close-editor" class="icon-button" type="button" aria-label="Đóng">×</button>
+      </div>
+      <label for="question-field">Câu hỏi <span aria-hidden="true">*</span></label>
+      <input id="question-field" name="question" maxlength="2000" required>
+      <label for="answer-field">Đáp án <span aria-hidden="true">*</span></label>
+      <textarea id="answer-field" name="answer" rows="7" required></textarea>
+      <label for="keywords-field">Từ khóa <span class="muted">(không bắt buộc)</span></label>
+      <input id="keywords-field" name="keywords" maxlength="2000">
+      <p id="editor-error" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions">
+        <button id="cancel-editor" class="button button-secondary" type="button">Hủy</button>
+        <button class="button button-primary" type="submit">Lưu câu hỏi</button>
+      </div>
+    </form>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="./config.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="./app.js" defer></script>
+</body>
+</html>
